@@ -13,17 +13,26 @@ st.title("Basket Craft — Merchandising Dashboard")
 # Use TS(col) to convert to a TIMESTAMP anywhere you need date logic.
 TS = "TO_TIMESTAMP_NTZ(CREATED_AT / 1000000000)"
 
+
+def secret(key):
+    """Read from st.secrets (Streamlit Cloud) with fallback to .env (local)."""
+    try:
+        return st.secrets[key]
+    except Exception:
+        return os.getenv(key)
+
+
 # ── Connection ────────────────────────────────────────────────────────────────
 
 @st.cache_resource
 def get_conn():
     return snowflake.connector.connect(
-        account=os.getenv("SNOWFLAKE_ACCOUNT"),
-        user=os.getenv("SNOWFLAKE_USER"),
-        password=os.getenv("SNOWFLAKE_PASSWORD"),
-        role=os.getenv("SNOWFLAKE_ROLE"),
-        warehouse=os.getenv("SNOWFLAKE_WAREHOUSE"),
-        database=os.getenv("SNOWFLAKE_DATABASE"),
+        account=secret("SNOWFLAKE_ACCOUNT"),
+        user=secret("SNOWFLAKE_USER"),
+        password=secret("SNOWFLAKE_PASSWORD"),
+        role=secret("SNOWFLAKE_ROLE"),
+        warehouse=secret("SNOWFLAKE_WAREHOUSE"),
+        database=secret("SNOWFLAKE_DATABASE"),
         schema="RAW",
     )
 
